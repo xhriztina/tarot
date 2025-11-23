@@ -223,6 +223,9 @@ button:hover {
     <label>Time</label>
     <input type="time" id="time">
 
+    <label>Your Name</label>
+    <input type="text" id="name" placeholder="Your name...">
+
     <label>Tarot Cards Drawn</label>
     <div id="cardGrid" class="card-grid"></div>
 
@@ -308,14 +311,15 @@ window.onload = () => {
 function submitEntry() {
     const date = document.getElementById("date").value;
     const time = document.getElementById("time").value;
+    const name = document.getElementById("name").value;
     const entry = document.getElementById("entry").value;
 
-    if (!date || !time || selectedCards.length === 0 || !entry) {
+    if (!name || !date || !time || selectedCards.length === 0 || !entry) {
         document.getElementById("status").innerText = "Fill all fields.";
         return;
     }
 
-    const endpoint = "https://script.google.com/macros/s/AKfycbyU4TTO3QtrpwgFw2dDBnBehsOxSKU4VK61kYxnJZfA23omL4O5dEy4yuhmpQ30VHDY/exec";
+    const endpoint = "https://script.google.com/macros/s/AKfycbyf-O7bPtpfzkM51iM-Wu8_0Yc5DvKl2IOy-i3uQy1mye-hKoLfE-JsvILqGApHgVmk/exec";
 
     fetch(endpoint, {
         method: "POST",
@@ -324,6 +328,7 @@ function submitEntry() {
         body: JSON.stringify({
             date,
             time,
+            name,
             cards: selectedCards.join(", "),
             entry
         })
