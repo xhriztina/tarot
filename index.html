@@ -6,19 +6,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Tarot Daily Log</title>
 
-<!-- Tarot aesthetic fonts -->
+<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 
-<!-- PWA Support -->
-<link rel="manifest" href="manifest.json" />
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="apple-touch-icon" href="icons/star-0.png">
 
 <style>
-/* ----------------------------------------------
-   🌸 Global soft tarot aesthetic
------------------------------------------------- */
+* {
+    box-sizing: border-box;
+}
+
+/* Background */
 body {
     margin: 0;
     padding: 0;
@@ -27,7 +29,7 @@ body {
     overflow-x: hidden;
 }
 
-/* Sparkle animation dots */
+/* Sparkles */
 .sparkle {
     position: fixed;
     width: 6px;
@@ -43,6 +45,7 @@ body {
     100% {transform: translateY(0) scale(1); opacity: 1;}
 }
 
+/* Main container */
 .container {
     max-width: 650px;
     margin: 40px auto;
@@ -60,7 +63,7 @@ h1 {
     margin-bottom: 20px;
 }
 
-/* Form labels + inputs */
+/* Inputs */
 label {
     display: block;
     margin-top: 18px;
@@ -78,39 +81,7 @@ input, textarea {
     background: #fff;
 }
 
-/* ----------------------------------------------
-   🎴 Tarot Card “Chip” with flip animation
------------------------------------------------- */
-.card-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 12px;
-}
-
-.card-chip {
-    padding: 10px 14px;
-    border-radius: 12px;
-    background: #f7d1e8;
-    border: 1px solid #e5a9cf;
-    cursor: pointer;
-    transition: transform 0.4s;
-    transform-style: preserve-3d;
-}
-
-/* Flip animation when tapped */
-.card-chip:active {
-    transform: rotateY(180deg);
-}
-
-.card-chip.selected {
-    background: #d167a4;
-    color: white;
-    border-color: #b2508a;
-    box-shadow: 0 3px 10px rgba(209, 103, 164, 0.4);
-}
-
-/* Save button */
+/* Button */
 button {
     width: 100%;
     margin-top: 22px;
@@ -122,7 +93,9 @@ button {
     font-size: 16px;
     cursor: pointer;
 }
-button:hover { background: #b2508a; }
+button:hover {
+    background: #b2508a;
+}
 
 #status {
     margin-top: 12px;
@@ -131,9 +104,7 @@ button:hover { background: #b2508a; }
     font-weight: bold;
 }
 
-/* ----------------------------------------------
-   🔐 Password Screen
------------------------------------------------- */
+/* Password screen */
 #lockScreen {
     position: fixed;
     top: 0; left: 0;
@@ -163,6 +134,42 @@ button:hover { background: #b2508a; }
     border: 1px solid #e3a8c8;
 }
 
+/* Tarot Card Grid */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.card {
+    width: 100%;
+    height: 160px;
+    background: white;
+    border-radius: 12px;
+    border: 2px solid #e5a9cf;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    color: #c94682;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+/* Glow when selected */
+.card.selected {
+    border-color: #d167a4;
+    box-shadow:
+        0 0 10px #d167a4,
+        0 0 20px rgba(209,103,164,0.5),
+        0 0 30px rgba(209,103,164,0.3);
+    transform: translateY(-3px);
+}
 </style>
 </head>
 
@@ -181,17 +188,17 @@ for (let i = 0; i < 30; i++) {
 }
 </script>
 
-<!-- 🔐 Password Screen -->
+<!-- Password Screen -->
 <div id="lockScreen">
     <div id="lockBox">
-        <h2 style="font-family:'Playfair Display',serif;color:#c94682;">🔒 Enter Password</h2>
+        <h2 style="font-family:'Playfair Display',serif;color:#c94682;">⭐ Enter Password ⭐</h2>
         <input id="unlockInput" type="password" placeholder="Password..." />
         <button onclick="unlock()">Unlock</button>
         <p id="unlockStatus" style="color:#b2508a;font-weight:bold;margin-top:10px;"></p>
     </div>
 </div>
 
-<!-- 🌸 Main App -->
+<!-- Main App -->
 <div class="container" id="app" style="display:none;">
 
     <h1>Tarot Daily Log</h1>
@@ -203,7 +210,7 @@ for (let i = 0; i < 30; i++) {
     <input type="time" id="time">
 
     <label>Tarot Cards Drawn</label>
-    <div id="cardList" class="card-list"></div>
+    <div id="cardGrid" class="card-grid"></div>
 
     <label>What Happened Today?</label>
     <textarea id="entry" rows="6"></textarea>
@@ -214,9 +221,7 @@ for (let i = 0; i < 30; i++) {
 </div>
 
 <script>
-/* ----------------------------------------------
-   🔐 Password Logic
------------------------------------------------- */
+/* PASSWORD */
 const PASSWORD = "adminpass";
 function unlock() {
     if (document.getElementById("unlockInput").value === PASSWORD) {
@@ -227,9 +232,7 @@ function unlock() {
     }
 }
 
-/* ----------------------------------------------
-   Tarot cards
------------------------------------------------- */
+/* TAROT CARDS */
 const tarotCards = [
     "The Fool","The Magician","The High Priestess","The Empress","The Emperor",
     "The Hierophant","The Lovers","The Chariot","Strength","The Hermit",
@@ -250,39 +253,34 @@ const tarotCards = [
     "Page of Pentacles","Knight of Pentacles","Queen of Pentacles","King of Pentacles"
 ];
 
+const cardGrid = document.getElementById("cardGrid");
 let selectedCards = [];
 
-const cardList = document.getElementById("cardList");
+tarotCards.forEach(cardName => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerText = cardName;
 
-tarotCards.forEach(card => {
-    const chip = document.createElement("div");
-    chip.className = "card-chip";
-    chip.innerText = card;
-
-    chip.onclick = () => {
-        chip.classList.toggle("selected");
-        if (selectedCards.includes(card)) {
-            selectedCards = selectedCards.filter(c => c !== card);
+    card.onclick = () => {
+        card.classList.toggle("selected");
+        if (selectedCards.includes(cardName)) {
+            selectedCards = selectedCards.filter(c => c !== cardName);
         } else {
-            selectedCards.push(card);
+            selectedCards.push(cardName);
         }
     };
 
-    cardList.appendChild(chip);
+    cardGrid.appendChild(card);
 });
 
-/* ----------------------------------------------
-   Auto Date/Time Fill
------------------------------------------------- */
+/* Auto Fill Date/Time */
 window.onload = () => {
     const now = new Date();
     document.getElementById("date").value = now.toISOString().split("T")[0];
     document.getElementById("time").value = now.toTimeString().slice(0,5);
 };
 
-/* ----------------------------------------------
-   Submit to Google Sheets Backend
------------------------------------------------- */
+/* SUBMIT */
 function submitEntry() {
     const date = document.getElementById("date").value;
     const time = document.getElementById("time").value;
@@ -311,11 +309,11 @@ function submitEntry() {
 }
 </script>
 
+<!-- Service Worker -->
 <script>
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js")
-    .then(() => console.log("Service Worker registered."))
-    .catch(err => console.log("SW registration failed", err));
+    navigator.serviceWorker.register("service-worker.js")
+        .then(() => console.log("Service Worker registered."));
 }
 </script>
 
