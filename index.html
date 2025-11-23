@@ -134,17 +134,29 @@ button:hover {
     border: 1px solid #e3a8c8;
 }
 
-/* Tarot Card Grid */
+/* ----------------------------------------------
+   🎴 Responsive Tarot Card Grid
+   2 per row on phones
+   6 per row on desktops
+------------------------------------------------ */
 .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    grid-template-columns: repeat(2, 1fr); /* default: phones */
     gap: 15px;
     margin-top: 20px;
 }
 
+/* Desktop & tablet: 6 per row */
+@media (min-width: 600px) {
+    .card-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}
+
+/* Individual card */
 .card {
     width: 100%;
-    height: 160px;
+    aspect-ratio: 2 / 3;
     background: white;
     border-radius: 12px;
     border: 2px solid #e5a9cf;
@@ -152,7 +164,7 @@ button:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 10px;
+    padding: 6px;
     text-align: center;
     font-family: 'Playfair Display', serif;
     color: #c94682;
@@ -170,6 +182,7 @@ button:hover {
         0 0 30px rgba(209,103,164,0.3);
     transform: translateY(-3px);
 }
+
 </style>
 </head>
 
@@ -272,6 +285,7 @@ tarotCards.forEach(cardName => {
 
     cardGrid.appendChild(card);
 });
+
 
 /* Auto Fill Date/Time */
 window.onload = () => {
