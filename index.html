@@ -16,9 +16,7 @@
 <link rel="apple-touch-icon" href="icons/icon-192-pink.png">
 
 <style>
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 /* Background */
 body {
@@ -27,18 +25,40 @@ body {
     font-family: 'Quicksand', sans-serif;
     background: linear-gradient(180deg, #fdebf7, #f6d7f1);
     overflow-x: hidden;
+    position: relative;
+}
+
+/* ✨ Sparkles */
+.sparkle {
+    position: fixed;
+    width: 14px;
+    height: 14px;
+    background-image: url("icons/star-1.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.7;
+    animation: shimmer 6s infinite ease-in-out;
+    pointer-events: none;
+    z-index: 0;
+}
+@keyframes shimmer {
+    0% { transform: scale(0.8) rotate(0deg); opacity: 0.4; }
+    50% { transform: scale(1.2) rotate(20deg); opacity: 1; }
+    100% { transform: scale(0.8) rotate(0deg); opacity: 0.4; }
 }
 
 /* Main container */
 .container {
     width: 90%;
-    max-width: 950px;   /* wider so cards never overflow */
+    max-width: 950px;
     margin: 40px auto;
     padding: 25px;
     background: white;
-    border-radius: 18px;
+    border-radius: 22px;
     border: 3px solid #f7c7e4;
     box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+    position: relative;
+    z-index: 10;
 }
 
 h1 {
@@ -67,7 +87,7 @@ input {
     background: #fff;
 }
 
-/* Textarea */
+/* Textarea (your preferred settings) */
 textarea {
     width: 100%;
     padding: 12px;
@@ -78,23 +98,27 @@ textarea {
     background: #fff;
     resize: vertical;
     min-height: 140px;
-    max-height:300px;
+    max-height: 300px;
 }
 
-/* Button */
+/* Pink pill button */
 button {
     width: 100%;
     margin-top: 22px;
     padding: 14px;
-    background: #d167a4;
+    background: #ff8ecf;
     color: white;
     border: none;
-    border-radius: 12px;
-    font-size: 16px;
+    border-radius: 40px;
+    font-size: 17px;
+    font-weight: 600;
     cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 143, 207, 0.4);
+    transition: 0.2s ease;
 }
 button:hover {
-    background: #b2508a;
+    background: #e574b8;
+    box-shadow: 0 6px 16px rgba(229, 116, 184, 0.6);
 }
 
 #status {
@@ -135,72 +159,77 @@ button:hover {
 }
 
 /* ----------------------------------------------
-   🎴 Tarot Cards Grid
+   🎴 Tarot Card Grid
 ------------------------------------------------ */
 .card-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* phones */
+    grid-template-columns: repeat(2, 1fr);
     gap: 15px;
     margin-top: 20px;
 }
 
 @media (min-width: 600px) {
     .card-grid {
-        grid-template-columns: repeat(6, 1fr); /* desktops */
+        grid-template-columns: repeat(6, 1fr);
     }
 }
 
-/* Card appearance */
+/* Tarot card tiles */
 .card {
     width: 100%;
-    aspect-ratio: 2 / 3;
-    min-width: 0;
-
+    aspect-ratio: 2/3;
     background: white;
     border-radius: 12px;
     border: 2px solid #e5a9cf;
-
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 6px;
-
     text-align: center;
     word-break: break-word;
-
     font-family: 'Playfair Display', serif;
     color: #c94682;
     font-size: 14px;
-
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
     cursor: pointer;
     transition: 0.25s ease;
+    position: relative;
 }
 
-/* Upright glow */
+/* Upright glowy selection */
 .card.selected {
     border-color: #d167a4;
-    box-shadow:
-        0 0 10px #d167a4,
-        0 0 20px rgba(209,103,164,0.5),
-        0 0 30px rgba(209,103,164,0.3);
+    box-shadow: 0 0 10px #d167a4,
+                0 0 20px rgba(209,103,164,0.5),
+                0 0 30px rgba(209,103,164,0.3);
     transform: translateY(-3px);
 }
 
-/* Reversed card style */
+/* Reversed style */
 .card.reversed {
     border-color: #8a4d78;
     transform: rotate(180deg);
-    box-shadow:
-        0 0 10px #8a4d78,
-        0 0 20px rgba(138,77,120,0.5),
-        0 0 30px rgba(138,77,120,0.3);
+    box-shadow: 0 0 10px #8a4d78,
+                0 0 20px rgba(138,77,120,0.4),
+                0 0 30px rgba(138,77,120,0.2);
 }
 
 </style>
 </head>
 
 <body>
+
+<!-- ✨ Sparkles -->
+<script>
+for (let i = 0; i < 35; i++) {
+    const s = document.createElement("div");
+    s.className = "sparkle";
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.top = Math.random() * 100 + "vh";
+    s.style.animationDelay = (Math.random() * 3) + "s";
+    document.body.appendChild(s);
+}
+</script>
 
 <!-- Password Screen -->
 <div id="lockScreen">
@@ -217,13 +246,13 @@ button:hover {
 
     <h1>Tarot Daily Log</h1>
 
-    <label>Date</label>
+    <label>Date 📅</label>
     <input type="date" id="date">
 
-    <label>Time</label>
+    <label>Time 🕒</label>
     <input type="time" id="time">
 
-    <label>Your Name</label>
+    <label>Your Name 👤</label>
     <input type="text" id="name" placeholder="Your name...">
 
     <label>Tarot Cards Drawn</label>
@@ -239,43 +268,45 @@ button:hover {
 
 <script>
 /* PASSWORD */
-const PASSWORD = "adminpass"; /* replace this */
+const PASSWORD = "adminpass"; // replace this!
 
 function unlock() {
-    const val = document.getElementById("unlockInput").value;
-    if (val === PASSWORD) {
-        document.getElementById("lockScreen").style.display = "none";
-        document.getElementById("app").style.display = "block";
+    if (document.getElementById("unlockInput").value === PASSWORD) {
+        lockScreen.style.display = "none";
+        app.style.display = "block";
     } else {
         document.getElementById("unlockStatus").innerText = "Incorrect password";
     }
 }
 
-/* TAROT CARDS */
+/* Tarot Cards List — FULL COINS SUIT */
 const tarotCards = [
     "The Fool","The Magician","The High Priestess","The Empress","The Emperor",
     "The Hierophant","The Lovers","The Chariot","Strength","The Hermit",
     "Wheel of Fortune","Justice","The Hanged Man","Death","Temperance",
     "The Devil","The Tower","The Star","The Moon","The Sun","Judgement","The World",
+
     "Ace of Wands","Two of Wands","Three of Wands","Four of Wands","Five of Wands",
     "Six of Wands","Seven of Wands","Eight of Wands","Nine of Wands","Ten of Wands",
     "Page of Wands","Knight of Wands","Queen of Wands","King of Wands",
+
     "Ace of Cups","Two of Cups","Three of Cups","Four of Cups","Five of Cups",
     "Six of Cups","Seven of Cups","Eight of Cups","Nine of Cups","Ten of Cups",
     "Page of Cups","Knight of Cups","Queen of Cups","King of Cups",
+
     "Ace of Swords","Two of Swords","Three of Swords","Four of Swords","Five of Swords",
     "Six of Swords","Seven of Swords","Eight of Swords","Nine of Swords","Ten of Swords",
     "Page of Swords","Knight of Swords","Queen of Swords","King of Swords",
-    "Ace of Coins","Two of Coins","Three of Coins","Four of Coins",
-    "Five of Coins","Six of Coins","Seven of Coins",
-    "Eight of Coins","Nine of Coins","Ten of Coins",
+
+    "Ace of Coins","Two of Coins","Three of Coins","Four of Coins","Five of Coins",
+    "Six of Coins","Seven of Coins","Eight of Coins","Nine of Coins","Ten of Coins",
     "Page of Coins","Knight of Coins","Queen of Coins","King of Coins"
 ];
 
-const cardGrid = document.getElementById("cardGrid");
 let selectedCards = [];
+const cardGrid = document.getElementById("cardGrid");
 
-/* 3-state toggle: upright → reversed → unselected */
+/* 3-state toggle */
 tarotCards.forEach(cardName => {
     const card = document.createElement("div");
     card.className = "card";
@@ -301,40 +332,39 @@ tarotCards.forEach(cardName => {
     cardGrid.appendChild(card);
 });
 
+/* Auto-fill date/time */
 window.onload = () => {
     const now = new Date();
-    document.getElementById("date").value = now.toISOString().split("T")[0];
-    document.getElementById("time").value = now.toTimeString().slice(0,5);
+    date.value = now.toISOString().split("T")[0];
+    time.value = now.toTimeString().slice(0,5);
 };
 
-/* SUBMIT */
+/* Submit */
 function submitEntry() {
-    const date = document.getElementById("date").value;
-    const time = document.getElementById("time").value;
-    const name = document.getElementById("name").value;
-    const entry = document.getElementById("entry").value;
+    const dateVal = date.value;
+    const timeVal = time.value;
+    const nameVal = name.value;
+    const entryVal = entry.value;
 
-    if (!name || !date || !time || selectedCards.length === 0 || !entry) {
-        document.getElementById("status").innerText = "Fill all fields.";
+    if (!nameVal || !dateVal || !timeVal || selectedCards.length === 0 || !entryVal) {
+        status.innerText = "Fill all fields.";
         return;
     }
 
-    const endpoint = "https://script.google.com/macros/s/AKfycbyf-O7bPtpfzkM51iM-Wu8_0Yc5DvKl2IOy-i3uQy1mye-hKoLfE-JsvILqGApHgVmk/exec";
-
-    fetch(endpoint, {
+    fetch("https://script.google.com/macros/s/AKfycbyf-O7bPtpfzkM51iM-Wu8_0Yc5DvKl2IOy-i3uQy1mye-hKoLfE-JsvILqGApHgVmk/exec", {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            date,
-            time,
-            name,
+            date: dateVal,
+            time: timeVal,
+            name: nameVal,
             cards: selectedCards.join(", "),
-            entry
+            entry: entryVal
         })
     });
 
-    document.getElementById("status").innerText = "Saved!";
+    status.innerText = "Saved!";
 }
 </script>
 
