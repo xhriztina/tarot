@@ -1,0 +1,25 @@
+{
+  "name": "Tarot Daily Log",
+  "short_name": "TarotLog",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fdebf7",
+  "theme_color": "#d167a4",
+  "icons": [
+    {
+      "src": "icons/moon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/star-0.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/star-1.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

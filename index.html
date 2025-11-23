@@ -6,115 +6,133 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Tarot Daily Log</title>
 
-<!-- Pretty tarot font -->
+<!-- Tarot aesthetic fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+<!-- PWA Support -->
+<link rel="manifest" href="manifest.json" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icons/star-0.png">
 
 <style>
 /* ----------------------------------------------
-   🌸 Global Aesthetic — soft pink tarot theme
+   🌸 Global soft tarot aesthetic
 ------------------------------------------------ */
 body {
-    font-family: 'Quicksand', sans-serif;
     margin: 0;
     padding: 0;
+    font-family: 'Quicksand', sans-serif;
     background: linear-gradient(180deg, #fdebf7, #f6d7f1);
-    color: #444;
+    overflow-x: hidden;
+}
+
+/* Sparkle animation dots */
+.sparkle {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    background: rgba(255,255,255,0.75);
+    border-radius: 50%;
+    animation: float 6s infinite ease-in-out;
+    pointer-events: none;
+}
+@keyframes float {
+    0% {transform: translateY(0) scale(1); opacity: 1;}
+    50% {transform: translateY(-40px) scale(1.4); opacity: 0.6;}
+    100% {transform: translateY(0) scale(1); opacity: 1;}
 }
 
 .container {
     max-width: 650px;
     margin: 40px auto;
-    background: white;
     padding: 25px;
+    background: white;
     border-radius: 18px;
-    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.12);
     border: 3px solid #f7c7e4;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.15);
 }
 
 h1 {
     text-align: center;
     font-family: 'Playfair Display', serif;
     color: #c94682;
-    font-size: 30px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
-/* Form elements */
+/* Form labels + inputs */
 label {
-    font-weight: bold;
-    margin-top: 16px;
     display: block;
+    margin-top: 18px;
+    font-weight: 600;
     color: #9a4c81;
 }
 
 input, textarea {
     width: 100%;
     padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #e3a8c8;
     margin-top: 6px;
     font-size: 15px;
+    border-radius: 10px;
+    border: 1px solid #e3a8c8;
+    background: #fff;
 }
 
 /* ----------------------------------------------
-   🃏 Tarot Card Chips (Better UI)
+   🎴 Tarot Card “Chip” with flip animation
 ------------------------------------------------ */
 .card-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 10px;
+    gap: 10px;
+    margin-top: 12px;
 }
 
 .card-chip {
-    padding: 8px 12px;
-    background: #f7d1e8;
+    padding: 10px 14px;
     border-radius: 12px;
+    background: #f7d1e8;
     border: 1px solid #e5a9cf;
     cursor: pointer;
-    transition: 0.2s;
-    user-select: none;
-    font-size: 14px;
+    transition: transform 0.4s;
+    transform-style: preserve-3d;
 }
 
-.card-chip:hover {
-    background: #efc0dd;
+/* Flip animation when tapped */
+.card-chip:active {
+    transform: rotateY(180deg);
 }
 
 .card-chip.selected {
     background: #d167a4;
     color: white;
     border-color: #b2508a;
-    box-shadow: 0 2px 8px rgba(209, 103, 164, 0.4);
+    box-shadow: 0 3px 10px rgba(209, 103, 164, 0.4);
 }
 
-/* Submit button */
+/* Save button */
 button {
     width: 100%;
+    margin-top: 22px;
+    padding: 14px;
     background: #d167a4;
     color: white;
-    padding: 14px;
     border: none;
     border-radius: 12px;
-    font-size: 17px;
-    margin-top: 25px;
+    font-size: 16px;
     cursor: pointer;
-    transition: 0.2s;
 }
-
-button:hover {
-    background: #b2508a;
-}
+button:hover { background: #b2508a; }
 
 #status {
-    margin-top: 14px;
+    margin-top: 12px;
     text-align: center;
     color: #7a3b61;
     font-weight: bold;
 }
 
 /* ----------------------------------------------
-   🔐 Password Lock Screen
+   🔐 Password Screen
 ------------------------------------------------ */
 #lockScreen {
     position: fixed;
@@ -122,28 +140,25 @@ button:hover {
     width: 100vw; height: 100vh;
     background: linear-gradient(180deg, #fce3f3, #f7d9ed);
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 9999;
-    padding: 20px;
+    z-index: 2000;
 }
 
-#lockScreenBox {
+#lockBox {
     background: white;
-    padding: 25px;
+    padding: 30px;
     border-radius: 16px;
     border: 3px solid #f7c7e4;
+    width: 80%;
     max-width: 320px;
     text-align: center;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
 }
 
 #unlockInput {
     width: 100%;
     padding: 12px;
     margin-top: 10px;
-    margin-bottom: 12px;
     border-radius: 10px;
     border: 1px solid #e3a8c8;
 }
@@ -151,12 +166,24 @@ button:hover {
 </style>
 </head>
 
-
 <body>
 
-<!-- 🔐 PASSWORD SCREEN -->
+<!-- Sparkles -->
+<script>
+for (let i = 0; i < 30; i++) {
+    const s = document.createElement("div");
+    s.className = "sparkle";
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.top = Math.random() * 100 + "vh";
+    s.style.animationDelay = Math.random() * 5 + "s";
+    s.style.opacity = (Math.random() * 0.8 + 0.2);
+    document.body.appendChild(s);
+}
+</script>
+
+<!-- 🔐 Password Screen -->
 <div id="lockScreen">
-    <div id="lockScreenBox">
+    <div id="lockBox">
         <h2 style="font-family:'Playfair Display',serif;color:#c94682;">🔒 Enter Password</h2>
         <input id="unlockInput" type="password" placeholder="Password..." />
         <button onclick="unlock()">Unlock</button>
@@ -164,65 +191,63 @@ button:hover {
     </div>
 </div>
 
-<!-- 🌸 MAIN APP -->
+<!-- 🌸 Main App -->
 <div class="container" id="app" style="display:none;">
+
     <h1>Tarot Daily Log</h1>
 
     <label>Date</label>
     <input type="date" id="date">
 
-    <label>Time of Entry</label>
+    <label>Time</label>
     <input type="time" id="time">
 
     <label>Tarot Cards Drawn</label>
-    <div class="card-list" id="cardList"></div>
+    <div id="cardList" class="card-list"></div>
 
     <label>What Happened Today?</label>
-    <textarea id="entry" rows="7" placeholder="Describe events without emotion or interpretation."></textarea>
+    <textarea id="entry" rows="6"></textarea>
 
     <button onclick="submitEntry()">Save Entry</button>
     <p id="status"></p>
+
 </div>
-
-
 
 <script>
 /* ----------------------------------------------
-   🔐 Simple Password Protection
+   🔐 Password Logic
 ------------------------------------------------ */
-const PASSWORD = "YOUR_PASSWORD_HERE";  // <<< SET THIS
-
+const PASSWORD = "YOUR_PASSWORD_HERE";
 function unlock() {
-    const input = document.getElementById("unlockInput").value;
-    if (input === PASSWORD) {
+    if (document.getElementById("unlockInput").value === PASSWORD) {
         document.getElementById("lockScreen").style.display = "none";
         document.getElementById("app").style.display = "block";
     } else {
-        document.getElementById("unlockStatus").innerText = "Incorrect password.";
+        document.getElementById("unlockStatus").innerText = "Incorrect password";
     }
 }
 
-
 /* ----------------------------------------------
-   🃏 Tarot List
+   Tarot cards
 ------------------------------------------------ */
 const tarotCards = [
-  "The Fool","The Magician","The High Priestess","The Empress","The Emperor",
-  "The Hierophant","The Lovers","The Chariot","Strength","The Hermit",
-  "Wheel of Fortune","Justice","The Hanged Man","Death","Temperance",
-  "The Devil","The Tower","The Star","The Moon","The Sun","Judgement","The World",
-  "Ace of Wands","Two of Wands","Three of Wands","Four of Wands","Five of Wands",
-  "Six of Wands","Seven of Wands","Eight of Wands","Nine of Wands","Ten of Wands",
-  "Page of Wands","Knight of Wands","Queen of Wands","King of Wands",
-  "Ace of Cups","Two of Cups","Three of Cups","Four of Cups","Five of Cups",
-  "Six of Cups","Seven of Cups","Eight of Cups","Nine of Cups","Ten of Cups",
-  "Page of Cups","Knight of Cups","Queen of Cups","King of Cups",
-  "Ace of Swords","Two of Swords","Three of Swords","Four of Swords","Five of Swords",
-  "Six of Swords","Seven of Swords","Eight of Swords","Nine of Swords","Ten of Swords",
-  "Page of Swords","Knight of Swords","Queen of Swords","King of Swords",
-  "Ace of Pentacles","Two of Pentacles","Three of Pentacles","Four of Pentacles","Five of Pentacles",
-  "Six of Pentacles","Seven of Pentacles","Eight of Pentacles","Nine of Pentacles","Ten of Pentacles",
-  "Page of Pentacles","Knight of Pentacles","Queen of Pentacles","King of Pentacles"
+    "The Fool","The Magician","The High Priestess","The Empress","The Emperor",
+    "The Hierophant","The Lovers","The Chariot","Strength","The Hermit",
+    "Wheel of Fortune","Justice","The Hanged Man","Death","Temperance",
+    "The Devil","The Tower","The Star","The Moon","The Sun","Judgement","The World",
+    "Ace of Wands","Two of Wands","Three of Wands","Four of Wands","Five of Wands",
+    "Six of Wands","Seven of Wands","Eight of Wands","Nine of Wands","Ten of Wands",
+    "Page of Wands","Knight of Wands","Queen of Wands","King of Wands",
+    "Ace of Cups","Two of Cups","Three of Cups","Four of Cups","Five of Cups",
+    "Six of Cups","Seven of Cups","Eight of Cups","Nine of Cups","Ten of Cups",
+    "Page of Cups","Knight of Cups","Queen of Cups","King of Cups",
+    "Ace of Swords","Two of Swords","Three of Swords","Four of Swords","Five of Swords",
+    "Six of Swords","Seven of Swords","Eight of Swords","Nine of Swords","Ten of Swords",
+    "Page of Swords","Knight of Swords","Queen of Swords","King of Swords",
+    "Ace of Pentacles","Two of Pentacles","Three of Pentacles","Four of Pentacles",
+    "Five of Pentacles","Six of Pentacles","Seven of Pentacles",
+    "Eight of Pentacles","Nine of Pentacles","Ten of Pentacles",
+    "Page of Pentacles","Knight of Pentacles","Queen of Pentacles","King of Pentacles"
 ];
 
 let selectedCards = [];
@@ -236,7 +261,6 @@ tarotCards.forEach(card => {
 
     chip.onclick = () => {
         chip.classList.toggle("selected");
-
         if (selectedCards.includes(card)) {
             selectedCards = selectedCards.filter(c => c !== card);
         } else {
@@ -247,9 +271,8 @@ tarotCards.forEach(card => {
     cardList.appendChild(chip);
 });
 
-
 /* ----------------------------------------------
-   📅 Auto Date + Time
+   Auto Date/Time Fill
 ------------------------------------------------ */
 window.onload = () => {
     const now = new Date();
@@ -257,9 +280,8 @@ window.onload = () => {
     document.getElementById("time").value = now.toTimeString().slice(0,5);
 };
 
-
 /* ----------------------------------------------
-   📝 Submit to Google Sheets Backend
+   Submit to Google Sheets Backend
 ------------------------------------------------ */
 function submitEntry() {
     const date = document.getElementById("date").value;
@@ -267,11 +289,11 @@ function submitEntry() {
     const entry = document.getElementById("entry").value;
 
     if (!date || !time || selectedCards.length === 0 || !entry) {
-        document.getElementById("status").innerText = "Please fill out all fields.";
+        document.getElementById("status").innerText = "Fill all fields.";
         return;
     }
 
-    const endpoint = "https://script.google.com/macros/s/AKfycbxtRUuk6Xzf-5kINHm1uksBYKqbBNUoEzKf3vMgNhPSeSOYBJrkcPIUJk0jlbuWFzV3/exec"; // <<< REPLACE
+    const endpoint = "https://script.google.com/macros/s/AKfycbxtRUuk6Xzf-5kINHm1uksBYKqbBNUoEzKf3vMgNhPSeSOYBJrkcPIUJk0jlbuWFzV3/exec";
 
     fetch(endpoint, {
         method: "POST",
@@ -286,11 +308,15 @@ function submitEntry() {
     });
 
     document.getElementById("status").innerText = "Saved!";
-    document.getElementById("entry").value = "";
-    selectedCards = [];
-    document.querySelectorAll(".card-chip").forEach(chip => chip.classList.remove("selected"));
 }
+</script>
 
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js")
+    .then(() => console.log("Service Worker registered."))
+    .catch(err => console.log("SW registration failed", err));
+}
 </script>
 
 </body>
