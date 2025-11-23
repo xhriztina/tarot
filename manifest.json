@@ -3,7 +3,7 @@
   "short_name": "TarotLog",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#fdebf7",
+  "background_color": "#f6d7f1",
   "theme_color": "#d167a4",
   "icons": [
     {

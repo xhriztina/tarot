@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="apple-touch-icon" href="icons/star-0.png">
+<link rel="apple-touch-icon" href="icons/icon-192-pink.png">
 
 <style>
 * {
@@ -29,25 +29,10 @@ body {
     overflow-x: hidden;
 }
 
-/* Sparkles */
-.sparkle {
-    position: fixed;
-    width: 6px;
-    height: 6px;
-    background: rgba(255,255,255,0.75);
-    border-radius: 50%;
-    animation: float 6s infinite ease-in-out;
-    pointer-events: none;
-}
-@keyframes float {
-    0% {transform: translateY(0) scale(1); opacity: 1;}
-    50% {transform: translateY(-40px) scale(1.4); opacity: 0.6;}
-    100% {transform: translateY(0) scale(1); opacity: 1;}
-}
-
 /* Main container */
 .container {
-    max-width: 900px;   /* ← was 650px */
+    width: 90%;
+    max-width: 950px;   /* wider so cards never overflow */
     margin: 40px auto;
     padding: 25px;
     background: white;
@@ -63,7 +48,7 @@ h1 {
     margin-bottom: 20px;
 }
 
-/* Inputs */
+/* Labels */
 label {
     display: block;
     margin-top: 18px;
@@ -71,7 +56,7 @@ label {
     color: #9a4c81;
 }
 
-/* Inputs (date, time, password, etc.) */
+/* Inputs */
 input {
     width: 100%;
     padding: 12px;
@@ -82,7 +67,7 @@ input {
     background: #fff;
 }
 
-/* Textarea only (journal entry) */
+/* Textarea */
 textarea {
     width: 100%;
     padding: 12px;
@@ -91,9 +76,8 @@ textarea {
     border-radius: 10px;
     border: 1px solid #e3a8c8;
     background: #fff;
-    resize: vertical;
-    min-height:120px;
-    max-height: 300px;
+    resize: none;
+    min-height: 140px;
 }
 
 /* Button */
@@ -150,45 +134,49 @@ button:hover {
 }
 
 /* ----------------------------------------------
-   🎴 Responsive Tarot Card Grid
-   2 per row on phones
-   6 per row on desktops
+   🎴 Tarot Cards Grid
 ------------------------------------------------ */
 .card-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* default: phones */
+    grid-template-columns: repeat(2, 1fr); /* phones */
     gap: 15px;
     margin-top: 20px;
 }
 
-/* Desktop & tablet: 6 per row */
 @media (min-width: 600px) {
     .card-grid {
-        grid-template-columns: repeat(6, 1fr);
+        grid-template-columns: repeat(6, 1fr); /* desktops */
     }
 }
 
-/* Individual card */
+/* Card appearance */
 .card {
     width: 100%;
     aspect-ratio: 2 / 3;
+    min-width: 0;
+
     background: white;
     border-radius: 12px;
     border: 2px solid #e5a9cf;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 6px;
+
     text-align: center;
+    word-break: break-word;
+
     font-family: 'Playfair Display', serif;
     color: #c94682;
     font-size: 14px;
+
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
     cursor: pointer;
-    transition: 0.2s ease;
+    transition: 0.25s ease;
 }
 
-/* Glow when selected */
+/* Upright glow */
 .card.selected {
     border-color: #d167a4;
     box-shadow:
@@ -198,23 +186,20 @@ button:hover {
     transform: translateY(-3px);
 }
 
+/* Reversed card style */
+.card.reversed {
+    border-color: #8a4d78;
+    transform: rotate(180deg);
+    box-shadow:
+        0 0 10px #8a4d78,
+        0 0 20px rgba(138,77,120,0.5),
+        0 0 30px rgba(138,77,120,0.3);
+}
+
 </style>
 </head>
 
 <body>
-
-<!-- Sparkles -->
-<script>
-for (let i = 0; i < 30; i++) {
-    const s = document.createElement("div");
-    s.className = "sparkle";
-    s.style.left = Math.random() * 100 + "vw";
-    s.style.top = Math.random() * 100 + "vh";
-    s.style.animationDelay = Math.random() * 5 + "s";
-    s.style.opacity = (Math.random() * 0.8 + 0.2);
-    document.body.appendChild(s);
-}
-</script>
 
 <!-- Password Screen -->
 <div id="lockScreen">
@@ -241,7 +226,7 @@ for (let i = 0; i < 30; i++) {
     <div id="cardGrid" class="card-grid"></div>
 
     <label>What Happened Today?</label>
-    <textarea id="entry" rows="6"></textarea>
+    <textarea id="entry"></textarea>
 
     <button onclick="submitEntry()">Save Entry</button>
     <p id="status"></p>
@@ -250,9 +235,11 @@ for (let i = 0; i < 30; i++) {
 
 <script>
 /* PASSWORD */
-const PASSWORD = "adminpass";
+const PASSWORD = "adminpass"; /* replace this */
+
 function unlock() {
-    if (document.getElementById("unlockInput").value === PASSWORD) {
+    const val = document.getElementById("unlockInput").value;
+    if (val === PASSWORD) {
         document.getElementById("lockScreen").style.display = "none";
         document.getElementById("app").style.display = "block";
     } else {
@@ -275,34 +262,41 @@ const tarotCards = [
     "Ace of Swords","Two of Swords","Three of Swords","Four of Swords","Five of Swords",
     "Six of Swords","Seven of Swords","Eight of Swords","Nine of Swords","Ten of Swords",
     "Page of Swords","Knight of Swords","Queen of Swords","King of Swords",
-    "Ace of Pentacles","Two of Pentacles","Three of Pentacles","Four of Pentacles",
-    "Five of Pentacles","Six of Pentacles","Seven of Pentacles",
-    "Eight of Pentacles","Nine of Pentacles","Ten of Pentacles",
-    "Page of Pentacles","Knight of Pentacles","Queen of Pentacles","King of Pentacles"
+    "Ace of Coins","Two of Coins","Three of Coins","Four of Coins",
+    "Five of Coins","Six of Coins","Seven of Coins",
+    "Eight of Coins","Nine of Coins","Ten of Coins",
+    "Page of Coins","Knight of Coins","Queen of Coins","King of Coins"
 ];
 
 const cardGrid = document.getElementById("cardGrid");
 let selectedCards = [];
 
+/* 3-state toggle: upright → reversed → unselected */
 tarotCards.forEach(cardName => {
     const card = document.createElement("div");
     card.className = "card";
     card.innerText = cardName;
 
     card.onclick = () => {
-        card.classList.toggle("selected");
-        if (selectedCards.includes(cardName)) {
-            selectedCards = selectedCards.filter(c => c !== cardName);
+        if (!card.classList.contains("selected") && !card.classList.contains("reversed")) {
+            card.classList.add("selected");
+            selectedCards.push(cardName + " (upright)");
+
+        } else if (card.classList.contains("selected")) {
+            card.classList.remove("selected");
+            card.classList.add("reversed");
+            selectedCards = selectedCards.filter(c => !c.startsWith(cardName));
+            selectedCards.push(cardName + " (reversed)");
+
         } else {
-            selectedCards.push(cardName);
+            card.classList.remove("reversed");
+            selectedCards = selectedCards.filter(c => !c.startsWith(cardName));
         }
     };
 
     cardGrid.appendChild(card);
 });
 
-
-/* Auto Fill Date/Time */
 window.onload = () => {
     const now = new Date();
     document.getElementById("date").value = now.toISOString().split("T")[0];
@@ -338,11 +332,9 @@ function submitEntry() {
 }
 </script>
 
-<!-- Service Worker -->
 <script>
 if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js")
-        .then(() => console.log("Service Worker registered."));
+    navigator.serviceWorker.register("service-worker.js");
 }
 </script>
 
